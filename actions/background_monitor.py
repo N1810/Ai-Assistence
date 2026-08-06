@@ -1,6 +1,6 @@
 """
 BackgroundMonitor — user-configured topic watching.
-Checks DDG news once per day per topic; alerts JARVIS when a new headline appears.
+Checks DDG news once per day per topic; alerts Neeraj when a new headline appears.
 No crypto, no finance, no uninvited tracking.
 """
 import hashlib
@@ -10,13 +10,13 @@ from datetime import datetime
 from pathlib import Path
 
 
-# ── Blocked categories (never monitor regardless of what user says) ────────────
+                                                                                 
 
 _BLOCKED = {
-    # Brand / asset names — spelled the same in every language
+                                                              
     "bitcoin", "ethereum", "dogecoin", "solana", "binance",
     "nft", "blockchain", "defi", "altcoin", "memecoin", "coin", "token",
-    # spellings of the "crypto" root across different languages
+                                                               
     "crypto", "kripto", "cripto", "krypto", "крипто", "仮想通貨", "暗号資産",
     "cryptocurrency",
 }
@@ -26,7 +26,7 @@ def _is_blocked(topic: str) -> bool:
     return any(word in t for word in _BLOCKED)
 
 
-# ── Slug / hash helpers ────────────────────────────────────────────────────────
+                                                                                 
 
 def _slug(topic: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", topic.lower().strip())[:40].strip("_")
@@ -35,7 +35,7 @@ def _title_hash(title: str) -> str:
     return hashlib.md5(title.encode("utf-8", errors="ignore")).hexdigest()[:12]
 
 
-# ── Memory I/O ─────────────────────────────────────────────────────────────────
+                                                                                 
 
 def _load() -> dict:
     from memory.memory_manager import load_memory
@@ -54,7 +54,7 @@ def _save(monitors: dict) -> None:
         )
 
 
-# ── Public API ─────────────────────────────────────────────────────────────────
+                                                                                 
 
 def add_monitor(topic: str) -> str:
     topic = topic.strip()
@@ -80,13 +80,13 @@ def add_monitor(topic: str) -> str:
 def remove_monitor(topic: str) -> str:
     topic = topic.strip().lower()
     monitors = _load()
-    # exact slug match first
+                            
     slug = _slug(topic)
     if slug in monitors:
         label = monitors.pop(slug)["topic"]
         _save(monitors)
         return f"Stopped monitoring: {label}"
-    # partial match fallback
+                            
     for key, val in list(monitors.items()):
         if topic in val.get("topic", "").lower():
             label = monitors.pop(key)["topic"]
@@ -116,7 +116,7 @@ def check_all() -> list[str]:
 
     for slug, data in monitors.items():
         if data.get("last_check") == today:
-            continue                     # already checked today
+            continue                                            
 
         topic = data.get("topic", slug)
         try:
@@ -136,7 +136,7 @@ def check_all() -> list[str]:
             changed = True
 
             if h == data.get("last_hash"):
-                continue                 # same headline as last check — no alert
+                continue                                                         
 
             monitors[slug]["last_hash"] = h
 

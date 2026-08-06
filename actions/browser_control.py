@@ -19,7 +19,7 @@ from playwright.async_api import (
     Playwright,
     TimeoutError as PlaywrightTimeout,
 )
-_OS = platform.system()   # "Windows" | "Darwin" | "Linux"
+_OS = platform.system()                                   
 
 def _normalize_url(url: str) -> str:
     """
@@ -32,7 +32,7 @@ def _normalize_url(url: str) -> str:
         return "about:blank"
     if "://" in url:
         return url
-    # No dot at all → assume .com  (e.g. "instagram" → "instagram.com")
+                                                                       
     if "." not in url:
         url = url + ".com"
     return "https://" + url
@@ -107,7 +107,7 @@ def _real_profile_dir(browser: str) -> str:
             print(f"[Browser] ✅ Real profile found for {browser}: {p}")
             return str(p)
 
-    fallback = home / ".jarvis_profiles" / browser
+    fallback = home / ".neeraj_profiles" / browser
     fallback.mkdir(parents=True, exist_ok=True)
     print(f"[Browser] ⚠️  Real profile not found for {browser}, using: {fallback}")
     return str(fallback)
@@ -363,7 +363,7 @@ _MAC_APP_NAMES: dict[str, str] = {
     "safari":  "Safari",
 }
 
-# Windows registry lookup names for browsers whose spec has no explicit binary
+                                                                              
 _WIN_EXE_HINTS: dict[str, str] = {"chrome": "chrome", "edge": "msedge"}
 
 
@@ -384,10 +384,10 @@ def _open_native(url: str, browser_name: Optional[str]) -> str:
     if browser_name:
         name = _ALIASES.get(browser_name.lower().strip(), browser_name.lower().strip())
     elif not url:
-        # No URL → only a window will open; needs the default browser's exe
+                                                                           
         name = _detect_default_browser()
 
-    # Specific browser → launch its own executable, exactly like the user would.
+                                                                                
     if name:
         if _OS == "Darwin":
             app = _MAC_APP_NAMES.get(name)
@@ -420,10 +420,10 @@ def _open_native(url: str, browser_name: Optional[str]) -> str:
     if not url:
         return "Could not find a browser to open."
 
-    # Default browser via the OS — exactly like the user clicking a link.
+                                                                         
     try:
         if _OS == "Windows":
-            os.startfile(url)                       # ShellExecute → default browser
+            os.startfile(url)                                                       
         elif _OS == "Darwin":
             subprocess.run(["open", url], check=True, timeout=10)
         else:
@@ -533,7 +533,7 @@ class _BrowserSession:
 
         if engine_name == "firefox":
             profile = _firefox_profile_dir() or str(
-                Path.home() / ".jarvis_profiles" / "firefox"
+                Path.home() / ".neeraj_profiles" / "firefox"
             )
             kwargs: dict = {
                 "headless":    False,
@@ -547,17 +547,17 @@ class _BrowserSession:
             try:
                 self._context = await engine_obj.launch_persistent_context(profile, **kwargs)
             except Exception as e:
-                print(f"[Browser] Firefox real profile failed ({e}), using JARVIS profile")
-                jarvis = str(Path.home() / ".jarvis_profiles" / "firefox_jarvis")
-                Path(jarvis).mkdir(parents=True, exist_ok=True)
-                self._context = await engine_obj.launch_persistent_context(jarvis, **kwargs)
+                print(f"[Browser] Firefox real profile failed ({e}), using Neeraj profile")
+                neeraj = str(Path.home() / ".neeraj_profiles" / "firefox_neeraj")
+                Path(neeraj).mkdir(parents=True, exist_ok=True)
+                self._context = await engine_obj.launch_persistent_context(neeraj, **kwargs)
 
             self._page = await self._adopt_page()
             print(f"[Browser] ✅ Firefox launched")
             return
 
         if engine_name == "webkit":
-            safari_profile = str(Path.home() / ".jarvis_profiles" / "safari")
+            safari_profile = str(Path.home() / ".neeraj_profiles" / "safari")
             Path(safari_profile).mkdir(parents=True, exist_ok=True)
             kwargs = {
                 "headless":    False,
@@ -607,18 +607,18 @@ class _BrowserSession:
         except Exception as e:
             print(f"[Browser] ⚠️  Real profile failed for {label}: {e}")
 
-        # The real profile could not be opened (browser already open / locked
-        # profile / newer Chrome versions block the real profile under
-        # automation). Fall back to a persistent JARVIS automation profile —
-        # accounts logged in here once stay logged in on later sessions too.
-        jarvis_profile = str(Path.home() / ".jarvis_profiles" / self.browser_name)
-        Path(jarvis_profile).mkdir(parents=True, exist_ok=True)
-        print(f"[Browser] Retrying with JARVIS profile: {jarvis_profile}")
+                                                                             
+                                                                      
+                                                                            
+                                                                            
+        neeraj_profile = str(Path.home() / ".neeraj_profiles" / self.browser_name)
+        Path(neeraj_profile).mkdir(parents=True, exist_ok=True)
+        print(f"[Browser] Retrying with Neeraj profile: {neeraj_profile}")
 
         try:
-            self._context = await engine_obj.launch_persistent_context(jarvis_profile, **kwargs)
+            self._context = await engine_obj.launch_persistent_context(neeraj_profile, **kwargs)
             self._page = await self._adopt_page()
-            print(f"[Browser] ✅ Launched [{label}] with JARVIS profile "
+            print(f"[Browser] ✅ Launched [{label}] with Neeraj profile "
                   f"(sign-ins persist across sessions)")
         except Exception as e2:
             raise RuntimeError(f"Could not launch {self.browser_name}: {e2}") from e2
@@ -626,7 +626,7 @@ class _BrowserSession:
 
     async def _get_page(self) -> Page:
         await self._launch()
-        # If somehow page got closed, open a fresh one
+                                                      
         if self._page is None or self._page.is_closed():
             self._page = await self._context.new_page()
             await asyncio.sleep(0.2)
@@ -644,7 +644,7 @@ class _BrowserSession:
                 await p.goto(url, wait_until="domcontentloaded", timeout=30_000)
                 await asyncio.sleep(0.3)
             except PlaywrightTimeout:
-                pass   # page may have partially loaded — check URL below
+                pass                                                     
             except Exception as e:
                 print(f"[Browser] goto exception (non-fatal): {e}")
             return p.url
@@ -805,7 +805,7 @@ class _BrowserSession:
     async def screenshot(self, path: str = None) -> str:
         page = await self._get_page()
         try:
-            save_path = path or str(Path.home() / "Desktop" / "jarvis_screenshot.png")
+            save_path = path or str(Path.home() / "Desktop" / "neeraj_screenshot.png")
             await page.screenshot(path=save_path, full_page=False)
             return f"Screenshot saved: {save_path}"
         except Exception as e:
@@ -956,12 +956,12 @@ def browser_control(
         _log(player, result)
         return result
 
-    # ── Navigation is ALWAYS native ──────────────────────────────────────────
-    # go_to / search / new_tab open the site in the user's own browser —
-    # their own profile, logged-in accounts and start page; exactly as if the
-    # user had opened it themselves. A controlled window with about:blank never
-    # opens here. The only exception: if an automation flow is already running,
-    # navigation continues in that window (so multi-step tasks aren't split).
+                                                                               
+                                                                        
+                                                                             
+                                                                               
+                                                                               
+                                                                             
     if action in ("go_to", "search", "new_tab"):
         if _registry.has(browser):
             sess = _registry.get(browser)
@@ -993,10 +993,10 @@ def browser_control(
         _log(player, result)
         return result
 
-    # ── Interactive actions (click/type/read…) ───────────────────────────────
-    # These require a physically controllable browser; the automation window
-    # only opens here, and as soon as it opens it goes to the user's last
-    # navigated page — it doesn't sit on a blank page.
+                                                                               
+                                                                            
+                                                                         
+                                                      
     try:
         sess = _registry.get(browser)
     except Exception as e:
@@ -1060,7 +1060,7 @@ def _log(player, text: str):
         player.write_log(f"[browser] {short[:60]}")
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "browser_control",
     "description": "Controls any web browser. Use for: opening websites, searching the web, clicking elements, filling forms, scrolling, screenshots, navigation, any web-based task. Simple open/search requests launch the user's own browser normally (their real profile and logged-in accounts); interactive actions (click, type, fill_form...) attach an automation browser. Always pass the 'browser' parameter when the user specifies a browser (e.g. 'open in Edge', 'use Firefox', 'open Chrome'). Multiple browsers can run simultaneously.",
