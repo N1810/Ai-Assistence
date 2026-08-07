@@ -15,9 +15,9 @@ BASE_DIR           = get_base_dir()
 API_CONFIG_PATH    = BASE_DIR / "config" / "api_keys.json"
 DESKTOP            = Path.home() / "Desktop"
 MAX_BUILD_ATTEMPTS = 3
-# Model choice lives in core/gemini.py, and so does the timeout and the
-# fallback ladder. Writing a model name here is what left this file hanging
-# forever whenever that one alias was unwell.
+                                                                       
+                                                                           
+                                             
 from core import gemini
 
 
@@ -60,7 +60,7 @@ def _resolve_save_path(output_path: str, language: str) -> Path:
         p = Path(output_path)
         return p if p.is_absolute() else DESKTOP / p
     ext = ext_map.get((language or "python").lower(), ".py")
-    return DESKTOP / f"jarvis_code{ext}"
+    return DESKTOP / f"neeraj_code{ext}"
 
 
 def _read_file(file_path: str) -> tuple[str, str]:
@@ -100,7 +100,7 @@ def _has_error(output: str) -> bool:
 def _take_screenshot() -> Path | None:
     try:
         import pyautogui
-        screenshot_path = Path.home() / "Desktop" / f"jarvis_debug_{int(time.time())}.png"
+        screenshot_path = Path.home() / "Desktop" / f"neeraj_debug_{int(time.time())}.png"
         screenshot = pyautogui.screenshot()
         screenshot.save(str(screenshot_path))
         print(f"[Code] 📸 Screenshot: {screenshot_path}")
@@ -157,7 +157,7 @@ def _detect_intent(description: str, file_path: str, code: str) -> str:
         except Exception as e:
             print(f"[Code] Intent classification failed ({e}) — structural fallback")
 
-    # Structural fallback — not tied to any language
+                                                    
     if file_exists:
         return "edit" if desc else "explain"
     if code:
@@ -420,7 +420,7 @@ Optimized code:"""
     except Exception as e:
         return f"Could not optimize code: {e}"
 
-    # Kaydet
+            
     if file_path:
         save_path = Path(file_path)
     else:
@@ -585,7 +585,7 @@ def code_helper(
         return f"Unknown action: '{action}'. Use write, edit, explain, run, build, optimize, or screen_debug."
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "code_helper",
     "description": "Writes, edits, explains, runs, or builds code files.",

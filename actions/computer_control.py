@@ -1,4 +1,4 @@
-#computer_control.py
+                    
 import io
 import json
 import platform
@@ -62,7 +62,7 @@ _SAFE_SCREENSHOT_ROOTS = (
 )
 
 def _safe_screenshot_path(requested: str | None) -> Path:
-    fallback = Path.home() / "Desktop" / "jarvis_screenshot.png"
+    fallback = Path.home() / "Desktop" / "neeraj_screenshot.png"
     if not requested:
         return fallback
     try:
@@ -513,7 +513,7 @@ def computer_control(
         return f"computer_control '{action}' failed: {e}"
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "computer_control",
     "description": "Direct computer control: type, click, hotkeys, scroll, move mouse, screenshots, find elements on screen.",
