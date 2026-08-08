@@ -1,4 +1,4 @@
-#desktop.py
+           
 import os
 import sys
 import json
@@ -15,7 +15,7 @@ try:
 except ImportError:
     _PYAUTOGUI = False
 
-_OS = platform.system()  # "Windows" | "Darwin" | "Linux"
+_OS = platform.system()                                  
 
 
 def _get_base_dir() -> Path:
@@ -69,7 +69,7 @@ def _build_sandbox() -> dict:
             import winreg
             sandbox["ctypes"] = ctypes
             sandbox["winreg"] = type("winreg", (), {
-                # Sadece okuma
+                              
                 "OpenKey":      winreg.OpenKey,
                 "QueryValueEx": winreg.QueryValueEx,
                 "HKEY_CURRENT_USER": winreg.HKEY_CURRENT_USER,
@@ -84,7 +84,7 @@ def _execute_generated_code(code: str, player=None) -> str:
     if not code or code.strip() == "UNSAFE":
         return "This action cannot be performed safely."
 
-    # Kod temizleme
+                   
     if code.startswith("```"):
         lines = code.split("\n")
         code  = "\n".join(lines[1:-1]).strip()
@@ -94,7 +94,7 @@ def _execute_generated_code(code: str, player=None) -> str:
     sandbox["__builtins__"]["print"] = lambda *a: output_lines.append(" ".join(str(x) for x in a))
 
     try:
-        exec(compile(code, "<jarvis_desktop>", "exec"), sandbox)
+        exec(compile(code, "<neeraj_desktop>", "exec"), sandbox)
         return "\n".join(output_lines) if output_lines else "Done."
     except Exception as e:
         print(f"[Desktop] Exec error: {e}\nCode:\n{code[:300]}")
@@ -197,7 +197,7 @@ def set_wallpaper(image_path: str) -> str:
                 ], capture_output=True)
 
             elif "kde" in desktop_env:
-                # KDE Plasma
+                            
                 script = f"""
 var allDesktops = desktops();
 for (var i = 0; i < allDesktops.length; i++) {{
@@ -482,7 +482,7 @@ def desktop_control(
         return f"Desktop control error: {e}"
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "desktop_control",
     "description": "Controls the desktop: wallpaper, organize, clean, list, stats.",
