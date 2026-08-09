@@ -12,11 +12,11 @@ except ImportError:
 
 from core.undo import push_undo
 
-_OS = platform.system()  # "Windows" | "Darwin" | "Linux"
+_OS = platform.system()                                  
 
-# Undo keeps a file's previous contents in memory so `write` can be reversed.
-# Above this size it does not — a 200 MB log would sit in RAM for the rest of
-# the session to protect an edit nobody is going to take back.
+                                                                             
+                                                                             
+                                                              
 _UNDO_CONTENT_LIMIT = 1_000_000
 
 
@@ -77,7 +77,7 @@ def _restore_from_trash(original: Path) -> str:
         try:
             import win32com.client
             shell = win32com.client.Dispatch("Shell.Application")
-            bin_folder = shell.NameSpace(10)      # ssfBITBUCKET
+            bin_folder = shell.NameSpace(10)                    
             for item in bin_folder.Items():
                 if str(bin_folder.GetDetailsOf(item, 1)).strip().lower() == \
                         str(original.parent).strip().lower():
@@ -163,12 +163,12 @@ def _resolve_path(raw: str) -> Path:
     if lower in shortcuts:
         return shortcuts[lower]
 
-    # "desktop/notes/a.md" and "desktop\notes\a.md" — a shortcut followed by a
-    # sub-path.  Without this branch the whole string falls through to the
-    # relative-path return below and is resolved against the process CWD instead
-    # of the real Desktop: an "Access denied" when the project lives outside the
-    # home directory, or — worse — a silent write into a stray "desktop" folder
-    # inside the project when it lives inside it.
+                                                                              
+                                                                          
+                                                                                
+                                                                                
+                                                                               
+                                                 
     head, sep, rest = raw.replace("\\", "/").partition("/")
     if sep and head.lower() in shortcuts:
         rest = rest.strip("/")
@@ -256,9 +256,9 @@ def create_folder(path: str, name: str = "") -> str:
             return f"Access denied: {target}"
         already = target.exists()
         target.mkdir(parents=True, exist_ok=True)
-        # Only offer to undo a folder we actually made. "mkdir -p" on something
-        # that was already there is not a change, and undoing it would delete a
-        # directory the user has had for years.
+                                                                               
+                                                                               
+                                               
         if not already:
             push_undo(f"created folder {target.name}", _undo_create(target))
         return f"Folder created: {target.name}"
@@ -275,7 +275,7 @@ def delete_file(path: str, name: str = "") -> str:
         if not target.exists():
             return f"Not found: {target.name}"
 
-        # Safe-directory check — protect critical user folders
+                                                              
         protected = {
             _get_desktop(), _get_downloads(), _get_documents(),
             _get_pictures(), _get_music(), _get_videos(), Path.home()
@@ -350,7 +350,7 @@ def copy_file(path: str, name: str = "", destination: str = "") -> str:
         else:
             shutil.copy2(str(src), str(dst))
 
-        # The undo for a copy is deleting the copy — never the original.
+                                                                        
         _copy = dst.resolve()
         def _undo_copy():
             if not _copy.exists():
@@ -422,18 +422,18 @@ def write_file(path: str, name: str = "", content: str = "",
             return f"Access denied: {target}"
         target.parent.mkdir(parents=True, exist_ok=True)
 
-        # Snapshot before writing. None means "did not exist", which is a
-        # different undo (delete it) from "existed and had this in it".
+                                                                         
+                                                                       
         previous: str | None = None
         undoable = True
         if target.exists():
             try:
                 if target.stat().st_size > _UNDO_CONTENT_LIMIT:
-                    undoable = False       # too large to hold in memory
+                    undoable = False                                    
                 else:
                     previous = target.read_text(encoding="utf-8", errors="ignore")
             except Exception:
-                undoable = False           # binary, locked, unreadable
+                undoable = False                                       
 
         mode = "a" if append else "w"
         with open(target, mode, encoding="utf-8") as f:
@@ -461,7 +461,7 @@ def find_files(name: str = "", extension: str = "",
 
         results    = []
         dir_count  = 0
-        max_dirs   = 500  # performance + safety limit
+        max_dirs   = 500                              
 
         for item in search_path.rglob("*"):
             if item.is_dir():
@@ -491,7 +491,7 @@ def find_files(name: str = "", extension: str = "",
 
 
 def get_largest_files(path: str = "downloads", count: int = 10) -> str:
-    count = min(count, 50)  # maksimum 50
+    count = min(count, 50)               
     try:
         search_path = _resolve_path(path)
         if not _is_safe_path(search_path):
@@ -552,11 +552,11 @@ def organize_desktop() -> str:
 
     desktop = _get_desktop()
     moved, skipped = [], []
-    journal: list[tuple[Path, Path]] = []   # (where it was, where it went)
+    journal: list[tuple[Path, Path]] = []                                  
 
     try:
         for item in desktop.iterdir():
-            # Leave folders, hidden files and organize-folders untouched
+                                                                        
             if item.is_dir() or item.name.startswith("."):
                 continue
             if item.name in {k for k in type_map}:
@@ -581,10 +581,10 @@ def organize_desktop() -> str:
             journal.append((origin, new_path.resolve()))
             moved.append(f"{item.name} → {target_dir.name}/")
 
-        # One command, dozens of moves — so one undo that reverses all of them.
-        # Without this, "organize my desktop" is the single least reversible
-        # thing the assistant can do to a person's files, and it was completely
-        # ungated.
+                                                                               
+                                                                            
+                                                                               
+                  
         if journal:
             def _undo_organize(entries=tuple(journal)):
                 restored = 0
@@ -596,8 +596,8 @@ def organize_desktop() -> str:
                             restored += 1
                     except Exception as e:
                         print(f"[file] undo organize: {moved_to.name}: {e}")
-                # Clear away the folders we created, but only while they are
-                # empty — anything the user put in since stays.
+                                                                            
+                                                               
                 for folder in {m.parent for _o, m in entries}:
                     try:
                         if folder.exists() and folder.is_dir() and not any(folder.iterdir()):
@@ -721,7 +721,7 @@ def file_controller(
         return f"File controller error ({action}): {e}"
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "file_controller",
     "description": "Manages files and folders: list, create, delete, move, copy, rename, read, write, find, disk usage.",

@@ -14,9 +14,9 @@ def get_base_dir():
 
 BASE_DIR         = get_base_dir()
 API_CONFIG_PATH  = BASE_DIR / "config" / "api_keys.json"
-PROJECTS_DIR     = Path.home() / "Desktop" / "JarvisProjects"
+PROJECTS_DIR     = Path.home() / "Desktop" / "NeerajProjects"
 MAX_FIX_ATTEMPTS = 5
-# Model choice, timeout and fallback ladder all live in core/gemini.py.
+                                                                       
 from core import gemini
 
 MODEL_PLANNER    = gemini.SMART
@@ -465,7 +465,7 @@ def _build_project(
         if speak: speak(msg)
         return msg
 
-    proj_name    = project_name or plan.get("project_name", "jarvis_project")
+    proj_name    = project_name or plan.get("project_name", "neeraj_project")
     proj_name    = re.sub(r"[^\w\-]", "_", proj_name)
     project_dir  = PROJECTS_DIR / proj_name
     project_dir.mkdir(parents=True, exist_ok=True)
@@ -607,7 +607,7 @@ def dev_agent(
     )
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "dev_agent",
     "description": "Builds complete multi-file projects from scratch: plans, writes files, installs deps, opens VSCode, runs and fixes errors.",
