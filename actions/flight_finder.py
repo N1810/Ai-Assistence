@@ -1,4 +1,4 @@
-#flight_finder.py
+                 
 import json
 import re
 import subprocess
@@ -29,8 +29,8 @@ _MONTH_MAP: dict[str, int] = {
     "september": 9, "october": 10, "november": 11, "december": 12,
 }
 
-# English fast-path only — Gemini (below) normalizes date expressions in ANY
-# language to YYYY-MM-DD, so no other language needs to be hardcoded here.
+                                                                            
+                                                                          
 _RELATIVE_MAP_KEYS = {
     "today",
     "tomorrow",
@@ -80,7 +80,7 @@ def _parse_date(raw: str) -> str:
                 year = today.year if month_num >= today.month else today.year + 1
                 return f"{year}-{month_num:02d}-{day:02d}"
 
-    # Last resort: today
+                        
     print(f"[FlightFinder] ⚠️ Could not parse date '{raw}' — using today.")
     return today.strftime("%Y-%m-%d")
 
@@ -103,7 +103,7 @@ def _build_google_flights_url(
     cabin_code = _CABIN_CODE.get(cabin.lower(), "1")
     base       = "https://www.google.com/travel/flights"
 
-    # Google Flights accepts these query params for pre-filling
+                                                               
     if return_date:
         trip = f"Flights+from+{origin}+to+{destination}+on+{date}+returning+{return_date}"
     else:
@@ -213,7 +213,7 @@ def _format_spoken(
             f"arriving {arrival}{dur_str}, {stop_str}, {price_str}."
         )
 
-    # Cheapest — strip non-digits for comparison
+                                                
     priced = [f for f in flights if f.get("price")]
     if priced:
         cheapest = min(
@@ -237,7 +237,7 @@ def _format_text_report(
     page_url:    str,
 ) -> str:
     lines = [
-        "JARVIS — Flight Search Results",
+        "Neeraj — Flight Search Results",
         "─" * 50,
         f"Route     : {origin} → {destination}",
         f"Date      : {date}",
@@ -309,7 +309,7 @@ def flight_finder(parameters: dict, player=None, speak=None) -> str:
     if not date_raw:
         return "Please provide a departure date, sir."
 
-    # Normalise cabin value
+                           
     if cabin not in _CABIN_CODE:
         cabin = "economy"
 
@@ -359,7 +359,7 @@ def flight_finder(parameters: dict, player=None, speak=None) -> str:
         return f"Flight search failed, sir: {e}"
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "flight_finder",
     "description": "Searches Google Flights and speaks the best options.",
