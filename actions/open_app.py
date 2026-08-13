@@ -175,7 +175,7 @@ _LINUX_TERMINAL_FALLBACKS = [
 
 def _launch_linux(app_name: str) -> bool:
 
-    # terminal emulators: try common ones in order
+                                                  
     if app_name in ("x-terminal-emulator", "gnome-terminal", "terminal"):
         for term in _LINUX_TERMINAL_FALLBACKS:
             if shutil.which(term):
@@ -273,7 +273,7 @@ def open_app(
         return f"Failed to open {app_name}: {e}"
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "open_app",
     "description": "Opens any application on the computer. Use this whenever the user asks to open, launch, or start any app, website, or program. Always call this tool — never just say you opened it.",
