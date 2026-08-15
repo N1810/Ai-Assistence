@@ -28,7 +28,7 @@ def _get_os() -> str:
 
 
 def _scripts_dir() -> Path:
-    d = Path.home() / ".jarvis" / "reminders"
+    d = Path.home() / ".neeraj" / "reminders"
     d.mkdir(parents=True, exist_ok=True)
     return d
 
@@ -106,7 +106,7 @@ if not notified:
         pass
 """
 
-    else:  # linux
+    else:         
         notify_block = f"""
 message = {msg_literal}
 notified = False
@@ -140,7 +140,7 @@ except Exception:
     pass
 """
     script_path.write_text(script_body, encoding="utf-8")
-    script_path.chmod(0o600)   # owner read/write only
+    script_path.chmod(0o600)                          
     return script_path
 
 def _schedule_windows(target_dt: datetime, task_name: str,
@@ -204,7 +204,7 @@ def _schedule_mac(target_dt: datetime, task_name: str,
     agents_dir = Path.home() / "Library" / "LaunchAgents"
     agents_dir.mkdir(parents=True, exist_ok=True)
 
-    label     = f"com.jarvis.reminder.{task_name}"
+    label     = f"com.neeraj.reminder.{task_name}"
     plist_path = agents_dir / f"{label}.plist"
 
     plist_content = f"""<?xml version="1.0" encoding="UTF-8"?>
@@ -308,7 +308,7 @@ def reminder(
 
     os_name    = _get_os()
     safe_msg   = _sanitise(message)
-    task_name  = f"JARVISReminder_{target_dt.strftime('%Y%m%d_%H%M%S')}"
+    task_name  = f"NeerajReminder_{target_dt.strftime('%Y%m%d_%H%M%S')}"
 
     try:
         script_path = _write_notify_script(task_name, safe_msg, os_name)
@@ -337,7 +337,7 @@ def reminder(
     return f"Reminder set for {friendly_time}."
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "reminder",
     "description": "Sets a timed reminder using Task Scheduler.",
