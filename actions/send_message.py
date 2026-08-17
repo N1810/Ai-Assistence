@@ -266,7 +266,7 @@ def send_message(
     return result
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "send_message",
     "description": "Sends a text message via WhatsApp, Telegram, or other messaging platform.",
