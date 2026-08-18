@@ -8,7 +8,7 @@ import time
 
 import psutil
 
-_OS = platform.system()  # "Windows" | "Darwin" | "Linux"
+_OS = platform.system()                                  
 
 DEFAULT_THRESHOLDS = {
     "cpu":  90.0,
@@ -20,9 +20,9 @@ DEFAULT_THRESHOLDS = {
 _COOLDOWN   = 300
 _CPU_STREAK = 3
 
-# ── NVML DLL cache (Windows: nvml.dll, Linux: libnvidia-ml.so.1) ─────────────
+                                                                               
 _nvml_lib: object = None
-_nvml_ok:  object = None   # None=untested  True=works  False=unavailable
+_nvml_ok:  object = None                                                 
 
 
 def _nvml_gpu() -> float:
@@ -70,9 +70,9 @@ def _nvml_gpu() -> float:
 
 
 def _get_gpu_usage() -> float:
-    # pynvml — subprocess-free, works everywhere if installed
+                                                             
     try:
-        import pynvml  # type: ignore
+        import pynvml                
         pynvml.nvmlInit()
         h = pynvml.nvmlDeviceGetHandleByIndex(0)
         return float(pynvml.nvmlDeviceGetUtilizationRates(h).gpu)
@@ -83,7 +83,7 @@ def _get_gpu_usage() -> float:
 
 
 def _get_cpu_temp() -> float:
-    # psutil — works on Linux; occasionally Windows with proper drivers
+                                                                       
     try:
         temps = psutil.sensors_temperatures()
         for name in ["coretemp", "k10temp", "cpu_thermal", "acpitz",
@@ -96,10 +96,10 @@ def _get_cpu_temp() -> float:
     except Exception:
         pass
 
-    # Windows: wmi module (pure Python COM, zero subprocess)
+                                                            
     if _OS == "Windows":
         try:
-            import wmi  # type: ignore
+            import wmi                
             w = wmi.WMI(namespace="root/wmi")
             tz = w.MSAcpi_ThermalZoneTemperature()
             if tz:
