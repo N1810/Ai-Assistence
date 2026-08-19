@@ -46,12 +46,12 @@ def _log(message: str, player=None) -> None:
     print(f"[Weather] {message}")
     if player:
         try:
-            player.write_log(f"JARVIS: {message}")
+            player.write_log(f"Neeraj: {message}")
         except Exception:
             pass
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "weather_report",
     "description": "Gives the weather report to user",
