@@ -1,16 +1,16 @@
-#web_search.py
+              
 import json
 import sys
 import threading
 import time
 from pathlib import Path
 
-# ── Gemini grounding quota circuit breaker ────────────────────────────────────
-# The google_search grounding tool has its own small quota, separate from plain
-# generation.  Once it is spent every call returns 429 — so retrying it at the
-# top of every search only adds a dead round-trip before the DDG fallback runs.
-# After a quota error, skip Gemini entirely for a cooldown period.
-_QUOTA_COOLDOWN_SEC  = 900          # 15 minutes
+                                                                                
+                                                                               
+                                                                              
+                                                                               
+                                                                  
+_QUOTA_COOLDOWN_SEC  = 900                      
 _quota_blocked_until = 0.0
 _quota_lock          = threading.Lock()
 
@@ -42,7 +42,7 @@ class _QuotaCooldown(RuntimeError):
 def _log_gemini_failure(context: str, exc: Exception) -> None:
     """Log a Gemini failure — silently when it is just the expected cooldown."""
     if isinstance(exc, _QuotaCooldown):
-        return          # announced once when the breaker tripped; not a warning
+        return                                                                  
     print(f"[WebSearch] \u26a0\ufe0f {context} failed ({exc}) — using DDG instead")
 
 
@@ -84,8 +84,8 @@ def _gemini_search(query: str) -> str:
 
     from core import gemini
 
-    # Grounded search reads a live page, so it gets a longer deadline than the
-    # default — but it still HAS one, and it still walks the fallback ladder.
+                                                                              
+                                                                             
     try:
         response = gemini.call(query, tier=gemini.SEARCH,
                                config={"tools": [{"google_search": {}}]},
@@ -158,8 +158,8 @@ def _ddg_news(query: str, max_results: int = 8) -> list[dict]:
                 })
     except Exception as e:
         print(f"[WebSearch] ⚠️ DDG news() failed ({e}) — falling back to text search")
-    # Also covers the legacy-package case, where news() returns an empty list
-    # instead of raising.
+                                                                             
+                         
     if not results:
         results = _ddg_search(query, max_results=max_results)
     return results
@@ -197,7 +197,7 @@ def _format_news(query: str, results: list[dict]) -> str:
     return "\n".join(lines).strip()
 
 
-# ── Briefing helper ────────────────────────────────────────────────────────────
+                                                                                 
 
 def _gemini_headlines(n: int = 5) -> tuple[list[str], str]:
     """
@@ -227,7 +227,7 @@ def _gemini_headlines(n: int = 5) -> tuple[list[str], str]:
         line = line.strip()
         if not line:
             continue
-        # Only accept lines that begin with a number — skips preamble/closing sentences
+                                                                                       
         if not re.match(r'^[\d]+[.\)\-]', line):
             continue
         clean = re.sub(r'^[\d]+[.\)\-]\s*', '', line)
@@ -238,7 +238,7 @@ def _gemini_headlines(n: int = 5) -> tuple[list[str], str]:
     return headlines[:n], raw.strip()
 
 
-# ── Modes ──────────────────────────────────────────────────────────────────────
+                                                                                 
 
 def _search(query: str) -> str:
     """Default search — Gemini grounded, DDG fallback."""
@@ -340,7 +340,7 @@ def _compare(items: list[str], aspect: str) -> str:
     return "\n".join(lines)
 
 
-# ── Public entry point ─────────────────────────────────────────────────────────
+                                                                                 
 
 def web_search(
     parameters:     dict,
@@ -381,7 +381,7 @@ def web_search(
         return f"Search failed: {e}"
 
 
-# ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
+                                                                               
 TOOL = {
     "name": "web_search",
     "description": "Searches the web. Use for ANY question about current facts, events, prices, or topics — always prefer this over guessing. Modes: 'search' (default), 'news' (latest headlines on a topic), 'research' (deep comprehensive answer), 'price' (product cost lookup), 'compare' (side-by-side comparison of items).",
