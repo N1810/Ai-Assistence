@@ -40,9 +40,9 @@ import time
 from dataclasses import dataclass
 from typing import Callable, Optional
 
-# A pending confirmation is abandoned after this long. Chosen to outlast a
-# normal "hang on, let me look at the screen" pause without leaving a live
-# shutdown button sitting on the HUD for the rest of the day.
+                                                                          
+                                                                          
+                                                             
 TIMEOUT_SECONDS = 90.0
 
 
@@ -58,8 +58,8 @@ class _Pending:
 _pending: Optional[_Pending] = None
 _lock = threading.Lock()
 
-# Set once at startup by main.py. Signature: (title, detail) -> None for show,
-# and () -> None for hide. Both are marshalled onto the Qt thread by the UI.
+                                                                              
+                                                                            
 _show_cb: Optional[Callable[[str, str], None]] = None
 _hide_cb: Optional[Callable[[], None]] = None
 _log_cb:  Optional[Callable[[str], None]] = None
@@ -88,8 +88,8 @@ def request(key: str, title: str, detail: str, run: Callable[[], str]) -> str:
     global _pending
 
     if _show_cb is None:
-        # No interface bound (headless, or a very early call). Refuse rather
-        # than silently performing something irreversible.
+                                                                            
+                                                          
         return (f"I cannot confirm '{title}' right now because the interface is "
                 f"not available, so I have not done it.")
 
