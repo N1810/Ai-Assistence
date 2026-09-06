@@ -40,16 +40,16 @@ import time
 from dataclasses import dataclass, field
 from typing import Callable
 
-# How many reversible operations we keep. Ten is roughly "this conversation":
-# far enough back to catch a mistake you noticed a few commands later, short
-# enough that a closure holding a file's old contents cannot pile up in RAM.
+                                                                             
+                                                                            
+                                                                            
 MAX_DEPTH = 10
 
 
 @dataclass
 class _Entry:
-    label:   str                    # human sentence, spoken back to the user
-    undo:    Callable[[], str]      # returns a short result string
+    label:   str                                                             
+    undo:    Callable[[], str]                                     
     at:      float = field(default_factory=time.monotonic)
 
 
@@ -68,11 +68,11 @@ def push_undo(label: str, undo_fn: Callable[[], str]) -> None:
     try:
         with _lock:
             _stack.append(_Entry(label=str(label)[:120], undo=undo_fn))
-            # Drop the oldest rather than refusing the newest: the recent past
-            # is what people ask to undo.
+                                                                              
+                                         
             while len(_stack) > MAX_DEPTH:
                 _stack.pop(0)
-    except Exception as e:                                  # pragma: no cover
+    except Exception as e:                                                    
         print(f"[Undo] push failed: {e}")
 
 
