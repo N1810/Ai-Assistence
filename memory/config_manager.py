@@ -52,8 +52,8 @@ def is_configured() -> bool:
 
 
 def get_assistant_name() -> str:
-    """Return the configured assistant name, or 'JARVIS' if not set."""
-    return load_api_keys().get("assistant_name", "JARVIS") or "JARVIS"
+    """Return the configured assistant name, or 'Neeraj' if not set."""
+    return load_api_keys().get("assistant_name", "Neeraj") or "Neeraj"
 
 
 def get_user_name() -> str:
@@ -70,14 +70,14 @@ def save_assistant_config(assistant_name: str, user_name: str) -> None:
             data = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
         except Exception:
             data = {}
-    data["assistant_name"] = assistant_name.strip() or "JARVIS"
+    data["assistant_name"] = assistant_name.strip() or "Neeraj"
     data["user_name"] = user_name.strip()
     CONFIG_FILE.write_text(json.dumps(data, indent=4), encoding="utf-8")
 
 
-# ── Assistant voice ──────────────────────────────────────────────────────────
-# Gemini Live prebuilt voices. Names are proper nouns — identical in every
-# language, so this list is safe to show verbatim in any locale.
+                                                                               
+                                                                          
+                                                                
 AVAILABLE_VOICES = ["Charon", "Puck", "Kore", "Fenrir", "Aoede"]
 DEFAULT_VOICE    = "Charon"
 
@@ -105,7 +105,7 @@ def save_voice(voice_name: str) -> None:
 
 
 def get_wake_word_enabled() -> bool:
-    """Whether local wake-word gating is on (assistant sleeps until 'Hey Jarvis')."""
+    """Whether local wake-word gating is on (assistant sleeps until 'Hey Neeraj')."""
     return load_api_keys().get("wake_word_enabled", False)
 
 
@@ -137,7 +137,7 @@ def get_hud_style() -> str:
     """Which centrepiece the HUD draws: the animated head, or the reactor core.
 
     Taste, not capability — both render in the same software painter and cost
-    about the same. Defaults to the head because that is what MARK LIV shipped
+    about the same. Defaults to the head because that is what Neeraj shipped
     with; anyone who preferred the older look can switch back in ⚙ and the
     choice survives a restart.
     """
@@ -150,10 +150,10 @@ def save_hud_style(style: str) -> None:
     _save_flag("hud_style", s if s in HUD_STYLES else "face")
 
 
-# ── Live-session tuning ──────────────────────────────────────────────────────
-# Everything here is optional and has a working default, so an untouched
-# config behaves exactly like a configured one. Each value is also a way out:
-# if a future model dislikes one of these, set it back and nothing else changes.
+                                                                               
+                                                                        
+                                                                             
+                                                                                
 
 def get_thinking_enabled() -> bool:
     """Whether the Live model may spend tokens thinking before it answers.
@@ -197,7 +197,7 @@ def get_turn_tuning() -> dict:
         "enabled":    bool(cfg.get("enabled", False)),
         "silence_ms": _int("silence_ms", 550, 200, 3000),
         "prefix_ms":  _int("prefix_ms", 150, 0, 1000),
-        # "high" = quicker to decide speech has ended.
+                                                      
         "end_sensitivity":   str(cfg.get("end_sensitivity", "high")).lower(),
         "start_sensitivity": str(cfg.get("start_sensitivity", "default")).lower(),
     }
@@ -281,12 +281,12 @@ def save_brief_enabled(enabled: bool) -> None:
     CONFIG_FILE.write_text(json.dumps(data, indent=4), encoding="utf-8")
 
 
-# ── Audio devices ────────────────────────────────────────────────────────────
-# Stored as device NAMES, not sounddevice indices. Indices shift every time a
-# USB device is plugged in or removed, so a saved index silently starts pointing
-# at a different microphone. The empty string means "system default", which is
-# both the factory setting and what an unresolvable saved device falls back to —
-# so unplugging a headset degrades to the built-in speakers instead of crashing.
+                                                                               
+                                                                             
+                                                                                
+                                                                              
+                                                                                
+                                                                                
 
 def _patch_config(**fields) -> None:
     """Read-modify-write one or more keys in api_keys.json.
@@ -328,12 +328,12 @@ def get_plugin_enabled(plugin_name: str) -> bool:
     return load_api_keys().get("plugins_enabled", {}).get(plugin_name, True)
 
 
-# ── Per-plugin settings ("tokens" / connection details) ───────────────────────
-# Generic store so a plugin can declare its own config fields (PLUGIN_SETTINGS)
-# and the settings UI renders + persists them WITHOUT any core edit — keeping the
-# drop-in model intact. Values live under plugin_config[<namespace>][<key>].
-# A namespace defaults to the plugin name, but a suite of plugins (e.g. the
-# several printer plugins) can share ONE namespace.
+                                                                                
+                                                                               
+                                                                                 
+                                                                            
+                                                                           
+                                                   
 def get_plugin_config(namespace: str) -> dict:
     """All stored values for a namespace (empty dict if none set yet)."""
     cfg = load_api_keys().get("plugin_config")
