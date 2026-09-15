@@ -17,31 +17,31 @@ MEMORY_PATH      = BASE_DIR / "memory" / "long_term.json"
 _lock            = Lock()
 MAX_VALUE_LENGTH = 380
 
-# ── Why there are two very different numbers here ────────────────────────────
-#
-# There used to be one: MEMORY_MAX_CHARS = 2200, applied to the whole store. It
-# was a *storage* limit, and it existed only because the entire memory was
-# pasted into the system prompt on every connect — so growing the memory grew
-# every single request. When it filled, _trim_to_limit() deleted the oldest
-# entries and printed one line to a console nobody reads. A memory described as
-# "deeply remembers projects, preferences and personal context" was in practice
-# two pages long, and quietly forgot your sister's name after a few weeks.
-#
-# Storage and prompt budget are now separate concerns:
-#
-#   MEMORY_MAX_CHARS  — a runaway guard, not a feature limit. Nothing normal
-#                       reaches it; a bug writing in a loop does.
-#   PROMPT_CORE_CHARS — what actually rides in the system prompt every session.
-#                       Smaller than the old whole-memory dump, so sessions
-#                       start *faster* than before, not slower.
-#
-# Everything above the core stays on disk and is fetched on demand by the
-# recall_memory tool — see search_memory() and format_memory_for_prompt().
+                                                                               
+ 
+                                                                               
+                                                                          
+                                                                             
+                                                                           
+                                                                               
+                                                                               
+                                                                          
+ 
+                                                      
+ 
+                                                                            
+                                                                 
+                                                                               
+                                                                           
+                                                               
+ 
+                                                                         
+                                                                          
 MEMORY_MAX_CHARS  = 200_000
 PROMPT_CORE_CHARS = 900
 PROMPT_INDEX_CHARS = 420
-# Most entries any one category may contribute to the core block, so a person
-# with forty stored preferences still gets their sister into the prompt.
+                                                                             
+                                                                        
 PROMPT_MAX_PER_CATEGORY = 6
 
 def _empty_memory() -> dict:
@@ -82,8 +82,8 @@ def _all_entries(memory: dict) -> list[tuple]:
     return entries
 
 
-# Set by main.py so a trim can reach the activity log. Deleting something a
-# person told you and mentioning it only on stdout is how a memory loses trust.
+                                                                           
+                                                                               
 _trim_notifier = None
 
 
@@ -177,8 +177,8 @@ def _pretty(key: str) -> str:
     return key.replace("_", " ").strip()
 
 
-# Identity is always in the prompt; these categories compete for the remaining
-# budget by recency.
+                                                                              
+                    
 _CATEGORY_LABELS = {
     "preferences":   "Preferences",
     "projects":      "Active projects / goals",
@@ -218,16 +218,16 @@ def format_memory_for_prompt(memory: dict | None) -> str:
 
     core_lines: list[str] = []
 
-    # 1. Identity - always, in full
+                                   
     identity = memory.get("identity", {}) or {}
     for field in _IDENTITY_FIELDS:
         val = _entry_value(identity.get(field))
         if not val:
             continue
         if field == "language":
-            # Labelled as an observation, not a setting. A bare "Language:
-            # English" line written months ago reads like a standing order and
-            # was one of the reasons a Turkish question came back in English.
+                                                                          
+                                                                              
+                                                                             
             core_lines.append(
                 f"Has spoken to you in: {val} (an observation about the past — "
                 f"always answer in the language of their CURRENT message)")
@@ -240,8 +240,8 @@ def format_memory_for_prompt(memory: dict | None) -> str:
         if val:
             core_lines.append(f"{_pretty(key).title()}: {val}")
 
-    # 2. Everything else, most recently updated first
-    rest: list[tuple[str, str, str, str]] = []   # (updated, cat, key, value)
+                                                     
+    rest: list[tuple[str, str, str, str]] = []                               
     for cat in _CATEGORY_LABELS:
         for key, entry in (memory.get(cat, {}) or {}).items():
             val = _entry_value(entry)
@@ -255,11 +255,11 @@ def format_memory_for_prompt(memory: dict | None) -> str:
     shown: dict[str, list[str]] = {}
     overflow: dict[str, list[str]] = {}
 
-    # Recency decides order, but no single category may take the whole budget.
-    # Without the cap, someone with forty stored preferences gets a prompt that
-    # is forty preferences and not one person's name — the categories that
-    # matter most in conversation are also the ones that change least often, so
-    # pure recency systematically buries them.
+                                                                              
+                                                                               
+                                                                          
+                                                                               
+                                              
     per_cat_used: dict[str, int] = {}
     for _updated, cat, key, val in rest:
         line = f"  - {_pretty(key).title()}: {val}"
@@ -271,11 +271,11 @@ def format_memory_for_prompt(memory: dict | None) -> str:
         else:
             overflow.setdefault(cat, []).append(_pretty(key))
 
-    # The index is a table of contents, so it is interleaved across categories
-    # rather than continuing in recency order. Sorted by recency it would list
-    # twenty-four preferences before the first relationship, and the one entry
-    # the index exists for — the old fact the model has no other way to know
-    # about — would fall off the end.
+                                                                              
+                                                                              
+                                                                              
+                                                                            
+                                     
     indexed: list[str] = []
     if overflow:
         cats  = [c for c in _CATEGORY_LABELS if overflow.get(c)]
@@ -303,7 +303,7 @@ def format_memory_for_prompt(memory: dict | None) -> str:
         *core_lines,
     ]
 
-    # 3. The index of what is on disk but not in this prompt
+                                                            
     if indexed:
         budget, names = PROMPT_INDEX_CHARS, []
         for n in indexed:
@@ -324,7 +324,7 @@ def format_memory_for_prompt(memory: dict | None) -> str:
     return "\n".join(out) + "\n"
 
 
-# ── Recall ────────────────────────────────────────────────────────────────────
+                                                                                
 
 def _score(query_words: list[str], cat: str, key: str, value: str) -> int:
     """Cheap lexical relevance. No embeddings, no network, no model call - this
@@ -358,7 +358,7 @@ def search_memory(query: str, limit: int = 8) -> str:
     rows: list[tuple[int, str, str, str]] = []
     for cat, items in memory.items():
         if not isinstance(items, dict):
-            continue                     # skip 'sessions', which is a list
+            continue                                                       
         for key, entry in items.items():
             val = _entry_value(entry)
             if not val:
@@ -381,7 +381,7 @@ def search_memory(query: str, limit: int = 8) -> str:
 
 
 def all_entries_for_ui() -> list[dict]:
-    """Flat list for the memory panel: what JARVIS knows, and when it learned it.
+    """Flat list for the memory panel: what Neeraj knows, and when it learned it.
     Sorted newest first so the panel opens on what changed most recently."""
     memory = load_memory()
     rows = []
@@ -423,9 +423,9 @@ def forget(key: str, category: str = "notes") -> str:
 forget_memory = forget
 
 
-# ── Session memory ─────────────────────────────────────────────────────────────
+                                                                                 
 
-_SESSION_MAX = 3   # safety cap — in practice 0-1 entries after pop
+_SESSION_MAX = 3                                                   
 
 
 def save_session_summary(summary: str, language: str = "") -> None:
@@ -467,7 +467,7 @@ def pop_last_session() -> dict | None:
             sessions = memory.get("sessions", [])
             if not isinstance(sessions, list) or not sessions:
                 return None
-            entry = sessions.pop()          # remove the last entry
+            entry = sessions.pop()                                 
             memory["sessions"] = sessions
             MEMORY_PATH.write_text(
                 json.dumps(memory, indent=2, ensure_ascii=False),
