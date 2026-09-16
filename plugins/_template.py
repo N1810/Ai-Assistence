@@ -1,12 +1,12 @@
 """
-Drop-in JARVIS plugin template.
+Drop-in Neeraj plugin template.
 
 Copy this file, rename it (no leading underscore), fill in PLUGIN and run().
-No other file needs to change — JARVIS discovers this automatically at startup.
+No other file needs to change — Neeraj discovers this automatically at startup.
 """
 
 PLUGIN = {
-    "name": "my_plugin",                     # snake_case, unique, ^[a-zA-Z_][a-zA-Z0-9_]{0,63}$
+    "name": "my_plugin",                                                                        
     "description": (
         "One or two sentences Gemini uses to decide when to call this tool. "
         "Be explicit about trigger phrases and, if it could be confused with "
@@ -18,14 +18,14 @@ PLUGIN = {
         "properties": {
             "example_arg": {"type": "STRING", "description": "What this argument means"},
         },
-        "required": [],   # omit or leave empty for a zero-argument tool
+        "required": [],                                                 
     },
 }
 
 def run(parameters: dict, player=None, session_memory=None) -> str:
     """
     parameters: dict of the args Gemini extracted, matching PLUGIN['parameters'].
-    player: the JarvisUI instance — use player.write_log(f"JARVIS: ...") to log,
+    player: the NeerajUI instance — use player.write_log(f"Neeraj: ...") to log,
             same as actions/*.py. May be None.
     session_memory: reserved, usually None today (core tools mostly pass None too).
     Return a short natural-language string — this is spoken back to the user.
@@ -39,7 +39,7 @@ def run(parameters: dict, player=None, session_memory=None) -> str:
         return f"Sir, my_plugin failed: {e}"
     if player:
         try:
-            player.write_log(f"JARVIS: {result_text}")
+            player.write_log(f"Neeraj: {result_text}")
         except Exception:
             pass
     return result_text
